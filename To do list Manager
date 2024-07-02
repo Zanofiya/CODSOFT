@@ -1,0 +1,104 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+struct Task {
+    std::string description;
+    bool isCompleted;
+
+    Task(const std::string& desc) : description(desc), isCompleted(false) {}
+};
+
+void displayMenu() {
+    std::cout << "\nTo-Do List Manager\n";
+    std::cout << "1. View tasks\n";
+    std::cout << "2. Add a task\n";
+    std::cout << "3. Mark task as completed\n";
+    std::cout << "4. Remove a task\n";
+    std::cout << "5. Exit\n";
+}
+
+void viewTasks(const std::vector<Task>& tasks) {
+    if (tasks.empty()) {
+        std::cout << "\nNo tasks in the list.\n";
+    } else {
+        std::cout << "\nTasks:\n";
+        for (size_t i = 0; i < tasks.size(); ++i) {
+            std::cout << i + 1 << ". " << (tasks[i].isCompleted ? "[Completed] " : "[Pending] ") << tasks[i].description << "\n";
+        }
+    }
+}
+
+void addTask(std::vector<Task>& tasks) {
+    std::string taskDescription;
+    std::cout << "\nEnter the task: ";
+    std::cin.ignore();
+    std::getline(std::cin, taskDescription);
+    tasks.emplace_back(taskDescription);
+    std::cout << "Task '" << taskDescription << "' added to the list.\n";
+}
+
+void markTaskCompleted(std::vector<Task>& tasks) {
+    viewTasks(tasks);
+    if (tasks.empty()) {
+        return;
+    }
+
+    int taskNum;
+    std::cout << "\nEnter the task number to mark as completed: ";
+    std::cin >> taskNum;
+    if (taskNum > 0 && static_cast<size_t>(taskNum) <= tasks.size()) {
+        tasks[taskNum - 1].isCompleted = true;
+        std::cout << "Task '" << tasks[taskNum - 1].description << "' marked as completed.\n";
+    } else {
+        std::cout << "Invalid task number.\n";
+    }
+}
+
+void removeTask(std::vector<Task>& tasks) {
+    viewTasks(tasks);
+    if (tasks.empty()) {
+        return;
+    }
+
+    int taskNum;
+    std::cout << "\nEnter the task number to remove: ";
+    std::cin >> taskNum;
+    if (taskNum > 0 && static_cast<size_t>(taskNum) <= tasks.size()) {
+        std::cout << "Task '" << tasks[taskNum - 1].description << "' removed from the list.\n";
+        tasks.erase(tasks.begin() + taskNum - 1);
+    } else {
+        std::cout << "Invalid task number.\n";
+    }
+}
+
+int main() {
+    std::vector<Task> tasks;
+    while (true) {
+        displayMenu();
+        int choice;
+        std::cout << "\nChoose an option: ";
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1:
+                viewTasks(tasks);
+                break;
+            case 2:
+                addTask(tasks);
+                break;
+            case 3:
+                markTaskCompleted(tasks);
+                break;
+            case 4:
+                removeTask(tasks);
+                break;
+            case 5:
+                std::cout << "Exiting the To-Do List Manager.\n";
+                return 0;
+            default:
+                std::cout << "Invalid choice. Please select a valid option.\n";
+        }
+    }
+}
+
